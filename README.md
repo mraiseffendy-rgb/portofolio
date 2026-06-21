@@ -1,2 +1,0 @@
-# portofolio
-this is portofolio 

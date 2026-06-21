@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>mraiseffendy — Developer Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0c10;
+    --bg-soft:#0d1016;
+    --panel:#11141c;
+    --panel-2:#151926;
+    --border:#222838;
+    --border-soft:#1a1f2c;
+    --text:#eceff4;
+    --text-muted:#8b93a7;
+    --text-dim:#566075;
+    --accent:#7c9cff;
+    --accent-2:#5fe3a1;
+    --accent-warm:#ffb454;
+    --radius-lg:18px;
+    --radius-md:12px;
+    --radius-sm:8px;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --display:'Space Grotesk', sans-serif;
+    --sans:'Inter', sans-serif;
+    --ease:cubic-bezier(.2,.8,.2,1);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--accent); color:#0a0c10;}
+  button{font-family:inherit; cursor:pointer; background:none; border:none; color:inherit;}
+  a{color:inherit; text-decoration:none;}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:4px;}
+
+  /* ---------- background fx ---------- */
+  .bg-fx{
+    position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  }
+  .bg-grid{
+    position:absolute; inset:-1px;
+    background-image:
+      linear-gradient(var(--border-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+    background-size:42px 42px;
+    opacity:.35;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+  }
+  .glow{position:absolute; border-radius:50%; filter:blur(90px); opacity:.22;}
+  .glow-a{width:520px; height:520px; background:var(--accent); top:-180px; left:-120px;}
+  .glow-b{width:460px; height:460px; background:var(--accent-2); bottom:-160px; right:-100px;}
+
+  /* ---------- topbar ---------- */
+  .topbar{
+    position:relative; z-index:5;
+    display:flex; align-items:flex-start; justify-content:space-between;
+    gap:16px;
+    padding:22px clamp(16px,4vw,40px);
+  }
+  .profile-mini{display:flex; align-items:center; gap:12px;}
+  .avatar-wrap{
+    position:relative; width:52px; height:52px; flex:none;
+  }
+  .avatar-ring{
+    position:absolute; inset:-3px; border-radius:50%;
+    background:conic-gradient(from 0deg, var(--accent), var(--accent-2), var(--accent-warm), var(--accent));
+    animation:spin 6s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .avatar-ring{animation:none;} }
+  .avatar-img, .avatar-fallback{
+    position:absolute; inset:3px; border-radius:50%; overflow:hidden;
+    background:var(--panel); display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--bg);
+  }
+  .avatar-img img{width:100%; height:100%; object-fit:cover; display:block;}
+  .avatar-fallback{display:none; font-family:var(--display); font-weight:700; color:var(--accent); font-size:16px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .profile-mini-text{display:flex; flex-direction:column; gap:2px;}
+  .profile-mini-name{font-family:var(--display); font-weight:600; font-size:15px; letter-spacing:.2px;}
+  .profile-mini-role{font-family:var(--mono); font-size:11px; color:var(--text-muted);}
+
+  .status-block{
+    text-align:right; display:flex; flex-direction:column; gap:6px; align-items:flex-end;
+  }
+  .status-line{
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    letter-spacing:.4px; text-transform:uppercase;
+  }
+  .status-date{
+    font-family:var(--mono); font-size:13px; color:var(--text-muted);
+    background:var(--panel); border:1px solid var(--border); padding:4px 10px;
+    border-radius:99px;
+  }
+  .status-clock{
+    font-family:var(--mono); font-size:13px; color:var(--text);
+    background:var(--panel); border:1px solid var(--border); padding:4px 10px;
+    border-radius:99px; display:flex; align-items:center; gap:7px;
+  }
+  .dot-live{
+    width:7px; height:7px; border-radius:50%; background:var(--accent-2);
+    box-shadow:0 0 0 0 rgba(95,227,161,.6);
+    animation:pulse 1.8s ease-out infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(95,227,161,.55);}
+    70%{box-shadow:0 0 0 7px rgba(95,227,161,0);}
+    100%{box-shadow:0 0 0 0 rgba(95,227,161,0);}
+  }
+  @media (prefers-reduced-motion: reduce){ .dot-live{animation:none;} }
+
+  /* ---------- hero / editor window ---------- */
+  .hero{
+    position:relative; z-index:2;
+    min-height:calc(100vh - 96px);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px clamp(16px,4vw,40px) 64px;
+  }
+  .editor-window{
+    width:100%; max-width:760px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    box-shadow:0 30px 80px -30px rgba(0,0,0,.7);
+    overflow:hidden;
+  }
+  .editor-chrome{
+    display:flex; align-items:center; gap:14px;
+    padding:13px 16px;
+    background:var(--panel-2);
+    border-bottom:1px solid var(--border);
+  }
+  .traffic{display:flex; gap:7px;}
+  .traffic span{width:11px; height:11px; border-radius:50%; display:block;}
+  .traffic .r{background:#ff5f57;}
+  .traffic .y{background:#febc2e;}
+  .traffic .g{background:#28c840;}
+  .editor-tab{
+    font-family:var(--mono); font-size:12px; color:var(--text-muted);
+    background:var(--panel); border:1px solid var(--border-soft);
+    padding:4px 12px; border-radius:7px 7px 0 0; border-bottom:none;
+    display:flex; align-items:center; gap:6px;
+  }
+  .editor-tab::before{content:'●'; color:var(--accent-2); font-size:8px;}
+
+  .editor-body{padding:clamp(22px,4vw,40px);}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:12px; color:var(--accent-2);
+    background:rgba(95,227,161,.08); border:1px solid rgba(95,227,161,.25);
+    padding:5px 12px; border-radius:99px; margin-bottom:18px;
+  }
+  .eyebrow .dot-live{background:var(--accent-2);}
+
+  .headline{
+    font-family:var(--display); font-weight:700;
+    font-size:clamp(28px,5vw,42px); line-height:1.12; letter-spacing:-.5px;
+    margin-bottom:8px;
+  }
+  .headline em{
+    font-style:normal;
+    background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .subline{
+    font-family:var(--mono); font-size:13px; color:var(--text-muted);
+    margin-bottom:26px;
+  }
+
+  .code-block{
+    font-family:var(--mono); font-size:12.5px; line-height:1.85;
+    background:var(--bg-soft); border:1px solid var(--border-soft);
+    border-radius:var(--radius-md); padding:16px 18px;
+    margin-bottom:20px; overflow-x:auto;
+  }
+  .code-block .ln{color:var(--text-dim); user-select:none; display:inline-block; width:18px;}
+  .tok-com{color:var(--text-dim);}
+  .tok-kw{color:var(--accent);}
+  .tok-str{color:var(--accent-2);}
+  .tok-prop{color:#c3a6ff;}
+  .tok-punc{color:var(--text-muted);}
+
+  .bio-text{
+    font-family:var(--sans); font-size:15px; line-height:1.7;
+    color:#cbd3e1; max-width:56ch; margin-bottom:30px;
+  }
+  .bio-text b{color:var(--text); font-weight:600;}
+
+  .btn-terminal{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:var(--mono); font-size:14px; font-weight:500; color:#0a0c10;
+    background:linear-gradient(135deg, var(--accent-2), #4fd1ff);
+    padding:13px 22px; border-radius:var(--radius-sm);
+    box-shadow:0 12px 30px -12px rgba(95,227,161,.5);
+    transition:transform .2s var(--ease), box-shadow .2s var(--ease);
+  }
+  .btn-terminal:hover{transform:translateY(-2px); box-shadow:0 16px 34px -12px rgba(95,227,161,.65);}
+  .btn-terminal:active{transform:translateY(0);}
+  .btn-terminal .chevron{transition:transform .2s var(--ease);}
+  .btn-terminal[aria-expanded="true"] .chevron{transform:rotate(90deg);}
+
+  /* ---------- edge pull tab (swipe hint) ---------- */
+  .edge-tab{
+    position:fixed; left:0; top:50%; transform:translateY(-50%);
+    z-index:30;
+    background:var(--panel); border:1px solid var(--border); border-left:none;
+    border-radius:0 var(--radius-md) var(--radius-md) 0;
+    padding:14px 9px; display:flex; flex-direction:column; align-items:center; gap:8px;
+    color:var(--text-muted);
+    box-shadow:6px 0 24px -10px rgba(0,0,0,.5);
+    transition:padding .2s var(--ease), color .2s var(--ease), background .2s var(--ease);
+    animation:nudge 3.2s ease-in-out infinite;
+  }
+  .edge-tab:hover{padding-left:14px; color:var(--accent-2); background:var(--panel-2);}
+  .edge-tab svg{width:16px; height:16px;}
+  .edge-tab span{
+    writing-mode:vertical-rl; text-orientation:mixed;
+    font-family:var(--mono); font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+  }
+  @keyframes nudge{
+    0%,80%,100%{transform:translateY(-50%) translateX(0);}
+    88%{transform:translateY(-50%) translateX(5px);}
+    94%{transform:translateY(-50%) translateX(0);}
+  }
+  @media (prefers-reduced-motion: reduce){ .edge-tab{animation:none;} }
+
+  /* ---------- overlays (shared) ---------- */
+  .overlay-backdrop{
+    position:fixed; inset:0; z-index:50;
+    background:rgba(6,8,12,.6); backdrop-filter:blur(6px);
+    opacity:0; pointer-events:none; transition:opacity .25s var(--ease);
+  }
+  .overlay-backdrop.open{opacity:1; pointer-events:auto;}
+
+  /* ---------- social panel ---------- */
+  .social-panel{
+    position:fixed; top:0; left:0; height:100%; width:min(340px,86vw);
+    z-index:51;
+    background:var(--panel); border-right:1px solid var(--border);
+    transform:translateX(-100%);
+    transition:transform .35s var(--ease);
+    display:flex; flex-direction:column;
+    box-shadow:30px 0 60px -30px rgba(0,0,0,.6);
+  }
+  .social-panel.open{transform:translateX(0);}
+  .panel-head{
+    padding:20px 22px; border-bottom:1px solid var(--border-soft);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .panel-head-text .t1{font-family:var(--mono); font-size:11px; color:var(--text-dim);}
+  .panel-head-text .t2{font-family:var(--display); font-weight:600; font-size:18px; margin-top:2px;}
+  .panel-close{
+    width:30px; height:30px; border-radius:50%; border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; color:var(--text-muted);
+    transition:background .2s, color .2s;
+  }
+  .panel-close:hover{background:var(--panel-2); color:var(--text);}
+
+  .panel-list{padding:18px; display:flex; flex-direction:column; gap:12px; overflow-y:auto;}
+  .social-card{
+    display:flex; align-items:center; gap:13px;
+    padding:14px; border-radius:var(--radius-md);
+    background:var(--panel-2); border:1px solid var(--border-soft);
+    transition:transform .2s var(--ease), border-color .2s, background .2s;
+  }
+  .social-card:hover{transform:translateX(4px); border-color:var(--accent); background:#171c2a;}
+  .social-icon{
+    width:42px; height:42px; border-radius:11px; flex:none;
+    display:flex; align-items:center; justify-content:center;
+    color:#0a0c10;
+  }
+  .social-icon svg{width:21px; height:21px;}
+  .ig .social-icon{background:linear-gradient(135deg,#f9ce34,#ee2a7b 55%,#6228d7);}
+  .fb .social-icon{background:#3b6dff;}
+  .tt .social-icon{background:linear-gradient(135deg,#25f4ee,#fe2c55);}
+  .gh .social-icon{background:linear-gradient(135deg,#4a4f58,#1b1e23); color:#fff;}
+  .wa .social-icon{background:linear-gradient(135deg,#25d366,#128c7e); color:#fff;}
+  .social-meta{display:flex; flex-direction:column; gap:2px; flex:1; min-width:0;}
+  .social-meta .name{font-family:var(--display); font-weight:600; font-size:14.5px;}
+  .social-meta .handle{font-family:var(--mono); font-size:11.5px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .social-go{color:var(--text-dim); flex:none;}
+  .social-card:hover .social-go{color:var(--accent-2);}
+
+  .panel-foot{
+    padding:16px 22px; border-top:1px solid var(--border-soft);
+    font-family:var(--mono); font-size:10.5px; color:var(--text-dim); text-align:center;
+  }
+
+  /* ---------- command palette ---------- */
+  .command-palette{
+    position:fixed; top:14vh; left:50%; transform:translateX(-50%) translateY(-10px);
+    z-index:71; width:min(440px,90vw);
+    background:var(--panel); border:1px solid var(--border);
+    border-radius:var(--radius-lg); overflow:hidden;
+    box-shadow:0 40px 90px -30px rgba(0,0,0,.75);
+    opacity:0; pointer-events:none;
+    transition:opacity .22s var(--ease), transform .22s var(--ease);
+  }
+  .command-palette.open{opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto;}
+  .palette-head{
+    padding:14px 18px; border-bottom:1px solid var(--border-soft);
+    font-family:var(--mono); font-size:13px; color:var(--accent-2);
+    display:flex; align-items:center; gap:8px; background:var(--panel-2);
+  }
+  .palette-head::before{content:'❯';}
+  .palette-list{padding:10px;}
+  .palette-item{
+    width:100%; display:flex; align-items:center; gap:13px;
+    padding:13px 12px; border-radius:var(--radius-sm);
+    text-align:left; transition:background .15s;
+    opacity:0; transform:translateY(-8px);
+  }
+  .command-palette.open .palette-item{
+    animation:dropIn .35s var(--ease) forwards;
+  }
+  .command-palette.open .palette-item:nth-child(1){animation-delay:.05s;}
+  .command-palette.open .palette-item:nth-child(2){animation-delay:.13s;}
+  .command-palette.open .palette-item:nth-child(3){animation-delay:.21s;}
+  @keyframes dropIn{to{opacity:1; transform:translateY(0);}}
+  @media (prefers-reduced-motion: reduce){
+    .command-palette.open .palette-item{animation:none; opacity:1; transform:none;}
+  }
+  .palette-item:hover{background:var(--panel-2);}
+  .palette-num{
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    width:22px; height:22px; border:1px solid var(--border); border-radius:6px;
+    display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  .palette-ic{font-size:18px; flex:none;}
+  .palette-txt{flex:1; min-width:0;}
+  .palette-txt .pt1{font-family:var(--sans); font-weight:600; font-size:14px;}
+  .palette-txt .pt2{font-family:var(--mono); font-size:11px; color:var(--text-muted);}
+  .palette-badge{
+    font-family:var(--mono); font-size:9.5px; text-transform:uppercase; letter-spacing:.5px;
+    padding:3px 8px; border-radius:99px; flex:none;
+  }
+  .badge-live{background:rgba(95,227,161,.12); color:var(--accent-2); border:1px solid rgba(95,227,161,.3);}
+  .badge-soon{background:rgba(255,180,84,.1); color:var(--accent-warm); border:1px solid rgba(255,180,84,.3);}
+
+  /* ---------- deploy modal ---------- */
+  .deploy-modal{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-46%);
+    z-index:81; width:min(420px,90vw);
+    background:var(--panel); border:1px solid var(--border);
+    border-radius:var(--radius-lg); overflow:hidden;
+    box-shadow:0 40px 90px -30px rgba(0,0,0,.8);
+    opacity:0; pointer-events:none;
+    transition:opacity .25s var(--ease), transform .25s var(--ease);
+  }
+  .deploy-modal.open{opacity:1; transform:translate(-50%,-50%); pointer-events:auto;}
+  .deploy-head{
+    padding:18px 20px; border-bottom:1px solid var(--border-soft);
+    display:flex; align-items:center; justify-content:space-between; background:var(--panel-2);
+  }
+  .deploy-head h3{font-family:var(--display); font-size:16px; font-weight:600;}
+  .deploy-body{padding:20px;}
+  .deploy-desc{font-size:13px; color:var(--text-muted); line-height:1.6; margin-bottom:16px;}
+  .field-label{font-family:var(--mono); font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.5px; margin-bottom:7px; display:block;}
+  .token-row{display:flex; gap:8px; margin-bottom:6px;}
+  .token-input{
+    flex:1; min-width:0; font-family:var(--mono); font-size:13px; color:var(--text);
+    background:var(--bg-soft); border:1px solid var(--border-soft); border-radius:var(--radius-sm);
+    padding:11px 12px;
+  }
+  .token-input:focus{border-color:var(--accent);}
+  .token-toggle{
+    width:42px; flex:none; border:1px solid var(--border-soft); border-radius:var(--radius-sm);
+    color:var(--text-muted); display:flex; align-items:center; justify-content:center;
+  }
+  .token-toggle:hover{color:var(--text); border-color:var(--border);}
+  .field-error{font-size:11.5px; color:#ff8a8a; min-height:16px; margin-bottom:10px; font-family:var(--mono);}
+
+  .deploy-submit{
+    width:100%; padding:13px; border-radius:var(--radius-sm);
+    font-family:var(--mono); font-weight:500; font-size:13.5px; color:#0a0c10;
+    background:linear-gradient(135deg, var(--accent), #4fd1ff);
+    transition:filter .2s;
+  }
+  .deploy-submit:hover{filter:brightness(1.08);}
+  .deploy-submit:disabled{opacity:.6; cursor:not-allowed;}
+
+  .deploy-log{
+    margin-top:16px; background:var(--bg-soft); border:1px solid var(--border-soft);
+    border-radius:var(--radius-sm); padding:12px 14px; font-family:var(--mono); font-size:11.5px;
+    color:var(--accent-2); line-height:1.9; max-height:140px; overflow-y:auto; display:none;
+  }
+  .deploy-log.show{display:block;}
+  .deploy-log .line-dim{color:var(--text-dim);}
+  .deploy-note{
+    margin-top:12px; font-size:11px; color:var(--text-dim); line-height:1.6;
+    border-top:1px dashed var(--border-soft); padding-top:12px; display:none;
+  }
+  .deploy-note.show{display:block;}
+  .icon-close{width:30px; height:30px; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-muted); transition:background .2s,color .2s;}
+  .icon-close:hover{background:var(--panel-2); color:var(--text);}
+
+  /* ---------- toast ---------- */
+  .toast-container{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    z-index:90; display:flex; flex-direction:column; gap:8px; align-items:center;
+  }
+  .toast{
+    font-family:var(--mono); font-size:12.5px; color:var(--text);
+    background:var(--panel); border:1px solid var(--border);
+    padding:11px 18px; border-radius:99px;
+    box-shadow:0 14px 36px -14px rgba(0,0,0,.7);
+    display:flex; align-items:center; gap:8px;
+    animation:toastIn .25s var(--ease), toastOut .25s var(--ease) 2.2s forwards;
+  }
+  @keyframes toastIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+  @keyframes toastOut{to{opacity:0; transform:translateY(-6px);}}
+
+  /* ---------- footer ---------- */
+  .foot-mark{
+    position:relative; z-index:2; text-align:center; padding:0 20px 32px;
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:560px){
+    .topbar{flex-direction:column; gap:14px;}
+    .status-block{align-items:flex-start; text-align:left; width:100%;}
+    .profile-mini{width:100%;}
+    .hero{min-height:auto; padding-top:8px;}
+    .edge-tab{padding:11px 7px;}
+  }
+
+  /* ============ LOADING SCREEN ============ */
+  .loading-screen{
+    position:fixed; inset:0; z-index:200;
+    background:var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:26px; padding:24px;
+    transition:opacity .6s var(--ease), visibility .6s var(--ease);
+  }
+  .loading-screen.hide{opacity:0; visibility:hidden; pointer-events:none;}
+  .loading-screen .bg-grid{opacity:.3;}
+
+  .robot{
+    position:relative; width:64px; height:74px;
+    animation:robotFloat 1.6s ease-in-out infinite;
+  }
+  @keyframes robotFloat{
+    0%,100%{transform:translateY(0) rotate(-3deg);}
+    50%{transform:translateY(-9px) rotate(3deg);}
+  }
+  .robot-antenna{
+    position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+    width:2px; height:12px; background:var(--border);
+  }
+  .robot-antenna::after{
+    content:''; position:absolute; top:-5px; left:50%; transform:translateX(-50%);
+    width:7px; height:7px; border-radius:50%; background:var(--accent-2);
+    box-shadow:0 0 10px 2px rgba(95,227,161,.7);
+    animation:blink 1s ease-in-out infinite;
+  }
+  @keyframes blink{0%,100%{opacity:1;} 50%{opacity:.25;}}
+  .robot-head{
+    width:38px; height:30px; margin:0 auto;
+    background:linear-gradient(160deg, #2a3142, #161a24);
+    border:1px solid var(--border);
+    border-radius:9px; position:relative;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .robot-eye{
+    width:6px; height:6px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 8px 1px rgba(124,156,255,.8);
+    animation:eyeBlink 2.4s ease-in-out infinite;
+  }
+  .robot-eye:nth-child(2){animation-delay:.15s;}
+  @keyframes eyeBlink{0%,88%,100%{transform:scaleY(1);} 92%{transform:scaleY(.15);}}
+  .robot-body{
+    width:46px; height:26px; margin:4px auto 0;
+    background:linear-gradient(160deg, #1c212e, #11141c);
+    border:1px solid var(--border); border-radius:8px;
+    position:relative;
+  }
+  .robot-body::before{
+    content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:14px; height:14px; border-radius:50%;
+    border:2px solid var(--accent-2); border-top-color:transparent;
+    animation:spin 1.1s linear infinite;
+  }
+  .robot-arm{
+    position:absolute; top:34px; width:4px; height:16px; border-radius:3px;
+    background:var(--border); transform-origin:top center;
+  }
+  .robot-arm.l{left:6px; animation:armSwingL .8s ease-in-out infinite;}
+  .robot-arm.r{right:6px; animation:armSwingR .8s ease-in-out infinite;}
+  @keyframes armSwingL{0%,100%{transform:rotate(-18deg);} 50%{transform:rotate(22deg);}}
+  @keyframes armSwingR{0%,100%{transform:rotate(18deg);} 50%{transform:rotate(-22deg);}}
+  .robot-leg{
+    position:absolute; bottom:-9px; width:5px; height:10px; border-radius:2px;
+    background:var(--border);
+  }
+  .robot-leg.l{left:18px;} .robot-leg.r{right:18px;}
+
+  .load-status{
+    font-family:var(--mono); font-size:12px; color:var(--text-muted);
+    letter-spacing:.3px; min-height:16px; text-align:center;
+  }
+  .audio-hint{
+    font-family:var(--mono); font-size:11px; color:var(--accent-2);
+    background:rgba(95,227,161,.08); border:1px solid rgba(95,227,161,.3);
+    padding:7px 14px; border-radius:99px; letter-spacing:.2px;
+    display:flex; align-items:center; gap:7px;
+    animation:hintPulse 1.6s ease-in-out infinite;
+    transition:opacity .4s var(--ease);
+  }
+  .audio-hint.fade-out{opacity:0;}
+  @keyframes hintPulse{0%,100%{opacity:.65;} 50%{opacity:1;}}
+  .load-bar-text{
+    font-family:var(--mono); font-size:15px; letter-spacing:1px; white-space:pre;
+  }
+  .load-bar-text .filled{color:var(--accent-2); text-shadow:0 0 8px rgba(95,227,161,.55);}
+  .load-bar-text .empty{color:var(--border);}
+  .load-bar-text .bracket{color:var(--text-dim);}
+  .load-percent{
+    font-family:var(--display); font-weight:700; font-size:22px;
+    background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    letter-spacing:.5px;
+  }
+  .load-title{
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:1.5px;
+  }
+
+  /* ============ APP CONTENT FADE-IN ============ */
+  .app-content{opacity:0; pointer-events:none; transition:opacity .7s var(--ease);}
+  .app-content.show{opacity:1; pointer-events:auto;}
+
+  /* ============ AUDIO TOGGLE ============ */
+  .audio-toggle{
+    position:fixed; right:18px; bottom:18px; z-index:40;
+    width:48px; height:48px; border-radius:50%;
+    background:var(--panel); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 14px 34px -14px rgba(0,0,0,.7);
+    transition:border-color .2s, transform .2s;
+  }
+  .audio-toggle:hover{border-color:var(--accent-2); transform:translateY(-2px);}
+  .audio-toggle svg{width:19px; height:19px; color:var(--text);}
+  .eq{display:flex; align-items:flex-end; gap:2px; height:14px; margin-left:1px;}
+  .eq span{width:3px; background:var(--accent-2); border-radius:2px; animation:eqBeat 1s ease-in-out infinite;}
+  .eq span:nth-child(1){height:5px; animation-delay:0s;}
+  .eq span:nth-child(2){height:12px; animation-delay:.15s;}
+  .eq span:nth-child(3){height:8px; animation-delay:.3s;}
+  @keyframes eqBeat{0%,100%{transform:scaleY(.4);} 50%{transform:scaleY(1);}}
+  .audio-toggle.muted{animation:ringPulse 2s ease-in-out infinite;}
+  @keyframes ringPulse{
+    0%,100%{box-shadow:0 14px 34px -14px rgba(0,0,0,.7), 0 0 0 0 rgba(95,227,161,.45);}
+    50%{box-shadow:0 14px 34px -14px rgba(0,0,0,.7), 0 0 0 8px rgba(95,227,161,0);}
+  }
+  .audio-toggle.muted .eq span{animation-play-state:paused; transform:scaleY(.25); opacity:.4;}
+
+  @media (prefers-reduced-motion: reduce){
+    .robot, .robot-arm.l, .robot-arm.r, .robot-eye, .robot-antenna::after, .eq span, .audio-hint, .audio-toggle.muted{animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<audio id="bgAudio" src="https://files.catbox.moe/k8oq12.mp3" loop muted autoplay preload="auto"></audio>
+
+<!-- ============ LOADING SCREEN ============ -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="bg-grid" style="position:absolute; inset:0;"></div>
+
+  <span class="load-title">memuat portfolio</span>
+
+  <div class="robot">
+    <div class="robot-antenna"></div>
+    <div class="robot-head">
+      <span class="robot-eye"></span>
+      <span class="robot-eye"></span>
+    </div>
+    <div class="robot-body">
+      <div class="robot-arm l"></div>
+      <div class="robot-arm r"></div>
+    </div>
+    <div class="robot-leg l"></div>
+    <div class="robot-leg r"></div>
+  </div>
+
+  <div class="load-bar-text" id="loadBarText"></div>
+  <span class="load-percent" id="loadPercent">0%</span>
+  <span class="load-status" id="loadStatus">menyiapkan aset...</span>
+  <div class="audio-hint" id="audioHint">🔊 ketuk layar untuk mengaktifkan musik</div>
+</div>
+
+<div id="appContent" class="app-content">
+<div class="bg-fx">
+  <div class="bg-grid"></div>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+</div>
+
+<!-- ============ TOPBAR ============ -->
+<header class="topbar">
+  <div class="profile-mini">
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <div class="avatar-img" id="avatarImg">
+        <img src="https://files.catbox.moe/52i26c.png" alt="Foto profil mraiseffendy" id="avatarPicture">
+      </div>
+      <div class="avatar-fallback" id="avatarFallback">MA</div>
+    </div>
+    <div class="profile-mini-text">
+      <span class="profile-mini-name">mraiseffendy</span>
+      <span class="profile-mini-role">Owner &amp; Developer</span>
+    </div>
+  </div>
+
+  <div class="status-block">
+    <span class="status-line">Website dibuat</span>
+    <span class="status-date">📅 21 Juni 2026</span>
+    <span class="status-clock"><span class="dot-live"></span><span id="liveClock">--:--:--</span></span>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<main class="hero">
+  <div class="editor-window">
+    <div class="editor-chrome">
+      <div class="traffic"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div class="editor-tab">portfolio.js</div>
+    </div>
+
+    <div class="editor-body">
+      <span class="eyebrow"><span class="dot-live"></span> status: online — terbuka untuk kolaborasi</span>
+
+      <h1 class="headline">Owner &amp; Developer<br><em>JavaScript / Node.js</em></h1>
+      <p class="subline">// membangun tools &amp; sistem, satu commit pada satu waktu</p>
+
+      <div class="code-block">
+<span class="ln">1</span><span class="tok-com">// about.js</span><br>
+<span class="ln">2</span><span class="tok-kw">const</span> profile = {<br>
+<span class="ln">3</span>&nbsp;&nbsp;<span class="tok-prop">name</span>: <span class="tok-str">'mraiseffendy'</span>,<br>
+<span class="ln">4</span>&nbsp;&nbsp;<span class="tok-prop">role</span>: <span class="tok-str">'Owner & Developer'</span>,<br>
+<span class="ln">5</span>&nbsp;&nbsp;<span class="tok-prop">stack</span>: [<span class="tok-str">'JavaScript'</span>, <span class="tok-str">'Node.js'</span>],<br>
+<span class="ln">6</span>&nbsp;&nbsp;<span class="tok-prop">focus</span>: <span class="tok-str">'pengujian umum pada sistem'</span>,<br>
+<span class="ln">7</span>};
+      </div>
+
+      <p class="bio-text">
+        Saya adalah seorang <b>owner sekaligus developer</b> di balik berbagai project berbasis
+        <b>JavaScript</b> dan <b>Node.js</b>, dengan fokus membangun tools untuk
+        <b>pengujian umum pada sistem</b>.
+      </p>
+
+      <button class="btn-terminal" id="projectBtn" aria-haspopup="true" aria-expanded="false">
+        <span>❯ Project saya</span>
+        <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </div>
+</main>
+
+<p class="foot-mark">© 2026 mraiseffendy — geser layar ke kanan untuk lihat sosial media →</p>
+
+<!-- ============ EDGE PULL TAB ============ -->
+<button class="edge-tab" id="edgeTab" aria-label="Buka panel sosial media">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+  <span>SOSMED</span>
+</button>
+
+<!-- ============ SOCIAL PANEL ============ -->
+<div class="overlay-backdrop" id="socialBackdrop"></div>
+<aside class="social-panel" id="socialPanel" aria-hidden="true">
+  <div class="panel-head">
+    <div class="panel-head-text">
+      <div class="t1">// connect.json</div>
+      <div class="t2">Sosial Media</div>
+    </div>
+    <button class="panel-close" id="socialClose" aria-label="Tutup panel">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+
+  <div class="panel-list">
+    <a class="social-card ig" href="https://www.instagram.com/mraiseffendy59?igsh=N3M1YWp3aW1pNjZo" target="_blank" rel="noopener noreferrer">
+      <span class="social-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor" stroke="none"/></svg>
+      </span>
+      <span class="social-meta">
+        <span class="name">Instagram</span>
+        <span class="handle">@mraiseffendy59</span>
+      </span>
+      <span class="social-go">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </span>
+    </a>
+
+    <a class="social-card fb" href="https://www.facebook.com/share/1CRQNP7Q7Q/" target="_blank" rel="noopener noreferrer">
+      <span class="social-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8.6h2.1l.3-2.7H14V4.2c0-.8.2-1.3 1.3-1.3h1.4V.5C16.4.4 15.5.3 14.5.3c-2.2 0-3.7 1.3-3.7 3.8v2H8.7v2.7h2.1V16h2.9V8.6z" transform="translate(2,3) scale(0.9)"/></svg>
+      </span>
+      <span class="social-meta">
+        <span class="name">Facebook</span>
+        <span class="handle">Profil Facebook saya</span>
+      </span>
+      <span class="social-go">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </span>
+    </a>
+
+    <a class="social-card tt" href="https://www.tiktok.com/@gc_random_bannir_offc?_r=1&_t=ZS-97OUdFa6w9F" target="_blank" rel="noopener noreferrer">
+      <span class="social-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.4a3.3 3.3 0 1 1-2.3-3.14"/><path d="M14 4c.4 2.5 2.3 4.3 4.7 4.6"/></svg>
+      </span>
+      <span class="social-meta">
+        <span class="name">TikTok</span>
+        <span class="handle">@gc_random_bannir_offc</span>
+      </span>
+      <span class="social-go">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </span>
+    </a>
+
+    <a class="social-card gh" href="https://github.com/mraiseffendy-rgb/" target="_blank" rel="noopener noreferrer">
+      <span class="social-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.03a9.4 9.4 0 0 1 5 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85v2.74c0 .26.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
+      </span>
+      <span class="social-meta">
+        <span class="name">GitHub</span>
+        <span class="handle">mraiseffendy-rgb</span>
+      </span>
+      <span class="social-go">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </span>
+    </a>
+
+    <a class="social-card wa" href="https://wa.me/6285150235304" target="_blank" rel="noopener noreferrer">
+      <span class="social-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.62 15.04L2 22l5.12-1.34A10 10 0 1 0 12 2zm0 18.2a8.16 8.16 0 0 1-4.16-1.14l-.3-.18-3.04.8.81-2.96-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.52-6.13c-.25-.12-1.47-.72-1.7-.81-.23-.08-.4-.12-.56.13-.17.25-.65.81-.79.97-.15.17-.29.19-.54.06-.25-.12-1.04-.38-1.98-1.21-.73-.65-1.22-1.46-1.37-1.71-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08s.89 2.42 1.02 2.59c.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/></svg>
+      </span>
+      <span class="social-meta">
+        <span class="name">WhatsApp</span>
+        <span class="handle">+62 851-5023-5304</span>
+      </span>
+      <span class="social-go">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </span>
+    </a>
+  </div>
+
+  <div class="panel-foot">tersambung secara aman • dibuka di tab baru</div>
+</aside>
+
+<!-- ============ COMMAND PALETTE ============ -->
+<div class="overlay-backdrop" id="paletteBackdrop"></div>
+<div class="command-palette" id="commandPalette" role="dialog" aria-label="Project saya">
+  <div class="palette-head">project saya</div>
+  <div class="palette-list">
+    <button class="palette-item" id="cmdDeploy">
+      <span class="palette-num">1</span>
+      <span class="palette-ic">🚀</span>
+      <span class="palette-txt">
+        <span class="pt1">Deploy Website</span>
+        <span class="pt2">deploy project dengan token</span>
+      </span>
+      <span class="palette-badge badge-live">buka</span>
+    </button>
+    <button class="palette-item" id="cmdPairing">
+      <span class="palette-num">2</span>
+      <span class="palette-ic">💬</span>
+      <span class="palette-txt">
+        <span class="pt1">Pairing Code WA</span>
+        <span class="pt2">hubungkan akun WhatsApp</span>
+      </span>
+      <span class="palette-badge badge-soon">soon</span>
+    </button>
+    <button class="palette-item" id="cmdHtml">
+      <span class="palette-num">3</span>
+      <span class="palette-ic">📦</span>
+      <span class="palette-txt">
+        <span class="pt1">Get HTML Project</span>
+        <span class="pt2">unduh source project ini</span>
+      </span>
+      <span class="palette-badge badge-soon">soon</span>
+    </button>
+  </div>
+</div>
+
+<!-- ============ DEPLOY MODAL ============ -->
+<div class="overlay-backdrop" id="deployBackdrop"></div>
+<div class="deploy-modal" id="deployModal" role="dialog" aria-label="Deploy Website">
+  <div class="deploy-head">
+    <h3>🚀 Deploy Website</h3>
+    <button class="icon-close" id="deployClose" aria-label="Tutup">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="deploy-body">
+    <p class="deploy-desc">Masukkan token deploy kamu secara manual untuk melanjutkan proses deploy ke sistem.</p>
+
+    <label class="field-label" for="tokenInput">Token deploy</label>
+    <div class="token-row">
+      <input type="password" id="tokenInput" class="token-input" placeholder="Tempel token di sini...">
+      <button type="button" class="token-toggle" id="tokenToggle" aria-label="Tampilkan token">
+        <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+    <div class="field-error" id="tokenError"></div>
+
+    <button class="deploy-submit" id="deploySubmit">Mulai Deploy</button>
+
+    <div class="deploy-log" id="deployLog"></div>
+    <div class="deploy-note" id="deployNote">
+      ⚠️ Ini adalah tampilan UI demo. Sambungkan tombol ini ke endpoint deployment kamu sendiri agar prosesnya berjalan sepenuhnya.
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<button class="audio-toggle muted" id="audioToggle" aria-label="Mute/unmute musik">
+  <svg id="audioIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.08"/></svg>
+  <span class="eq"><span></span><span></span><span></span></span>
+</button>
+</div><!-- /#appContent -->
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- audio (ringan & auto-play, dengan fade-in halus) ---------- */
+  const bgAudio = document.getElementById('bgAudio');
+  const audioToggle = document.getElementById('audioToggle');
+  const audioIcon = document.getElementById('audioIcon');
+  const TARGET_VOLUME = 0.55;
+  const ICON_ON  = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.08"/>';
+  const ICON_OFF = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/>';
+
+  function updateAudioIcon(){
+    audioIcon.innerHTML = bgAudio.muted ? ICON_OFF : ICON_ON;
+    audioToggle.classList.toggle('muted', bgAudio.muted);
+  }
+
+  function fadeVolume(target, duration){
+    const start = bgAudio.volume;
+    const startTime = performance.now();
+    function step(now){
+      const t = Math.min(1, (now - startTime) / duration);
+      bgAudio.volume = start + (target - start) * t;
+      if(t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function tryUnmutedAutoplay(){
+    // beberapa browser mengizinkan audio otomatis jika sebelumnya pernah berinteraksi dengan situs ini
+    bgAudio.volume = TARGET_VOLUME;
+    bgAudio.muted = false;
+    const p = bgAudio.play();
+    if(p && p.catch){
+      p.then(updateAudioIcon).catch(function(){
+        // diblokir browser, tetap jalan otomatis dalam mode senyap (sudah aktif via atribut autoplay+muted)
+        bgAudio.muted = true;
+        bgAudio.play().catch(function(){});
+        updateAudioIcon();
+      });
+    }
+  }
+  tryUnmutedAutoplay();
+
+  function unmuteWithFade(){
+    if(!bgAudio.muted) return;
+    bgAudio.muted = false;
+    bgAudio.volume = 0;
+    bgAudio.play().catch(function(){});
+    fadeVolume(TARGET_VOLUME, 1000);
+    updateAudioIcon();
+    const hint = document.getElementById('audioHint');
+    if(hint) hint.classList.add('fade-out');
+  }
+  ['pointerdown','touchstart','keydown'].forEach(function(evt){
+    document.addEventListener(evt, unmuteWithFade, {once:true, passive:true});
+  });
+
+  audioToggle.addEventListener('click', function(){
+    if(bgAudio.muted){
+      unmuteWithFade();
+    }else{
+      bgAudio.muted = true;
+      updateAudioIcon();
+    }
+  });
+
+  updateAudioIcon();
+
+  /* ---------- loading screen ---------- */
+  const loadingScreen = document.getElementById('loadingScreen');
+  const appContent = document.getElementById('appContent');
+  const loadBarText = document.getElementById('loadBarText');
+  const loadPercent = document.getElementById('loadPercent');
+  const loadStatus = document.getElementById('loadStatus');
+  document.body.style.overflow = 'hidden';
+
+  const TOTAL_CELLS = 22;
+  const statusSteps = [
+    [0,   'menyiapkan aset...'],
+    [20,  'menghubungkan ke server...'],
+    [45,  'memuat portfolio.js...'],
+    [68,  'merender komponen...'],
+    [88,  'hampir selesai...'],
+    [100, 'selesai ✅']
+  ];
+
+  function renderBar(progress){
+    const filledCount = Math.round((progress/100) * TOTAL_CELLS);
+    let html = '<span class="bracket">[</span>';
+    for(let i=0; i<TOTAL_CELLS; i++){
+      html += i < filledCount
+        ? '<span class="filled">█</span>'
+        : '<span class="empty">-</span>';
+    }
+    html += '<span class="bracket">]</span>';
+    loadBarText.innerHTML = html;
+    loadPercent.textContent = progress + '%';
+    for(let i=statusSteps.length-1; i>=0; i--){
+      if(progress >= statusSteps[i][0]){ loadStatus.textContent = statusSteps[i][1]; break; }
+    }
+  }
+
+  let progress = 0;
+  renderBar(0);
+
+  function loadTick(){
+    progress = Math.min(100, progress + (3 + Math.random()*7));
+    renderBar(Math.round(progress));
+    if(progress < 100){
+      setTimeout(loadTick, 90 + Math.random()*110);
+    }else{
+      setTimeout(finishLoading, 500);
+    }
+  }
+  setTimeout(loadTick, 250);
+
+  function finishLoading(){
+    loadingScreen.classList.add('hide');
+    appContent.classList.add('show');
+    document.body.style.overflow = '';
+    setTimeout(function(){ loadingScreen.style.display = 'none'; }, 650);
+  }
+
+  /* ---------- live clock ---------- */
+  const liveClock = document.getElementById('liveClock');
+  function updateClock(){
+    const now = new Date();
+    const time = now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
+    liveClock.textContent = time;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  /* ---------- avatar fallback ---------- */
+  const avatarPicture = document.getElementById('avatarPicture');
+  const avatarImgBox = document.getElementById('avatarImg');
+  const avatarFallback = document.getElementById('avatarFallback');
+  avatarPicture.addEventListener('error', function(){
+    avatarImgBox.style.display = 'none';
+    avatarFallback.style.display = 'flex';
+  });
+
+  /* ---------- helper: open/close overlay pairs ---------- */
+  function lockScroll(lock){ document.body.style.overflow = lock ? 'hidden' : ''; }
+
+  /* ---------- social panel ---------- */
+  const socialPanel = document.getElementById('socialPanel');
+  const socialBackdrop = document.getElementById('socialBackdrop');
+  const edgeTab = document.getElementById('edgeTab');
+  const socialClose = document.getElementById('socialClose');
+
+  function openSocial(){
+    socialPanel.classList.add('open');
+    socialBackdrop.classList.add('open');
+    socialPanel.setAttribute('aria-hidden','false');
+    lockScroll(true);
+  }
+  function closeSocial(){
+    socialPanel.classList.remove('open');
+    socialBackdrop.classList.remove('open');
+    socialPanel.setAttribute('aria-hidden','true');
+    lockScroll(false);
+  }
+  edgeTab.addEventListener('click', openSocial);
+  socialClose.addEventListener('click', closeSocial);
+  socialBackdrop.addEventListener('click', closeSocial);
+
+  /* ---------- swipe / drag right to open social panel ---------- */
+  let startX = 0, startY = 0, tracking = false;
+
+  function isInteractive(el){
+    return el.closest('button, a, input, .editor-window, .social-panel, .command-palette, .deploy-modal');
+  }
+
+  document.addEventListener('touchstart', function(e){
+    const t = e.touches[0];
+    startX = t.clientX; startY = t.clientY; tracking = true;
+  }, {passive:true});
+
+  document.addEventListener('touchend', function(e){
+    if(!tracking) return;
+    tracking = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+    if(dx > 90 && Math.abs(dy) < 70 && startX < window.innerWidth * 0.92){
+      openSocial();
+    }
+  }, {passive:true});
+
+  // desktop mouse-drag equivalent (skips clicks on interactive UI)
+  let mouseDown = false;
+  document.addEventListener('mousedown', function(e){
+    if(isInteractive(e.target)) return;
+    mouseDown = true; startX = e.clientX; startY = e.clientY;
+  });
+  document.addEventListener('mouseup', function(e){
+    if(!mouseDown) return;
+    mouseDown = false;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if(dx > 110 && Math.abs(dy) < 70){
+      openSocial();
+    }
+  });
+
+  /* ---------- command palette ---------- */
+  const projectBtn = document.getElementById('projectBtn');
+  const commandPalette = document.getElementById('commandPalette');
+  const paletteBackdrop = document.getElementById('paletteBackdrop');
+
+  function openPalette(){
+    commandPalette.classList.add('open');
+    paletteBackdrop.classList.add('open');
+    projectBtn.setAttribute('aria-expanded','true');
+    lockScroll(true);
+  }
+  function closePalette(){
+    commandPalette.classList.remove('open');
+    paletteBackdrop.classList.remove('open');
+    projectBtn.setAttribute('aria-expanded','false');
+    lockScroll(false);
+  }
+  projectBtn.addEventListener('click', function(){
+    if(commandPalette.classList.contains('open')){ closePalette(); } else { openPalette(); }
+  });
+  paletteBackdrop.addEventListener('click', closePalette);
+
+  /* ---------- toast ---------- */
+  const toastContainer = document.getElementById('toastContainer');
+  function showToast(msg){
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    toastContainer.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 2500);
+  }
+
+  document.getElementById('cmdPairing').addEventListener('click', function(){
+    showToast('💬 Pairing Code WA — Coming soon');
+  });
+  document.getElementById('cmdHtml').addEventListener('click', function(){
+    showToast('📦 Get HTML Project — Coming soon');
+  });
+
+  /* ---------- deploy modal ---------- */
+  const deployModal = document.getElementById('deployModal');
+  const deployBackdrop = document.getElementById('deployBackdrop');
+  const deployClose = document.getElementById('deployClose');
+  const tokenInput = document.getElementById('tokenInput');
+  const tokenToggle = document.getElementById('tokenToggle');
+  const tokenError = document.getElementById('tokenError');
+  const deploySubmit = document.getElementById('deploySubmit');
+  const deployLog = document.getElementById('deployLog');
+  const deployNote = document.getElementById('deployNote');
+
+  function openDeploy(){
+    closePalette();
+    deployModal.classList.add('open');
+    deployBackdrop.classList.add('open');
+    lockScroll(true);
+    setTimeout(function(){ tokenInput.focus(); }, 200);
+  }
+  function closeDeploy(){
+    deployModal.classList.remove('open');
+    deployBackdrop.classList.remove('open');
+    lockScroll(false);
+  }
+  document.getElementById('cmdDeploy').addEventListener('click', openDeploy);
+  deployClose.addEventListener('click', closeDeploy);
+  deployBackdrop.addEventListener('click', closeDeploy);
+
+  tokenToggle.addEventListener('click', function(){
+    const isPw = tokenInput.type === 'password';
+    tokenInput.type = isPw ? 'text' : 'password';
+  });
+
+  deploySubmit.addEventListener('click', function(){
+    const val = tokenInput.value.trim();
+    if(!val){
+      tokenError.textContent = '✕ token tidak boleh kosong';
+      return;
+    }
+    tokenError.textContent = '';
+    deploySubmit.disabled = true;
+    deploySubmit.textContent = 'Memproses...';
+    deployLog.classList.add('show');
+    deployLog.innerHTML = '';
+    deployNote.classList.remove('show');
+
+    const steps = [
+      'memvalidasi token...',
+      'menghubungkan ke server deploy...',
+      'mengunggah berkas project...',
+      'menjalankan build...',
+      '✅ build berhasil',
+      '🎉 deploy selesai'
+    ];
+    steps.forEach(function(line, i){
+      setTimeout(function(){
+        const p = document.createElement('div');
+        p.innerHTML = '<span class="line-dim">$</span> ' + line;
+        deployLog.appendChild(p);
+        deployLog.scrollTop = deployLog.scrollHeight;
+        if(i === steps.length - 1){
+          deploySubmit.disabled = false;
+          deploySubmit.textContent = 'Mulai Deploy';
+          deployNote.classList.add('show');
+        }
+      }, i * 550);
+    });
+  });
+
+  /* ---------- escape key closes any open overlay ---------- */
+  document.addEventListener('keydown', function(e){
+    if(e.key !== 'Escape') return;
+    if(deployModal.classList.contains('open')) closeDeploy();
+    else if(commandPalette.classList.contains('open')) closePalette();
+    else if(socialPanel.classList.contains('open')) closeSocial();
+  });
+
+})();
+</script>
+</body>
+</html>
